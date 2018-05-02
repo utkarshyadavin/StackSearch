@@ -1,5 +1,8 @@
 package com.example.utkarshyadavin.stacksearch.api;
 
+import com.example.utkarshyadavin.stacksearch.models.QuestionList;
+
+import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
 
