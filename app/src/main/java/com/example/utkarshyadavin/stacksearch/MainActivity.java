@@ -1,13 +1,17 @@
 package com.example.utkarshyadavin.stacksearch;
 
+import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.support.v7.widget.SearchView;
 
 import retrofit2.Call ;
 import retrofit2.Callback;
@@ -34,13 +38,13 @@ public class MainActivity extends AppCompatActivity  {
     private String ORDER_BY = "desc" ;
     private String SORT_BY = "activity" ;
     private String DEFAULT_TAG = "cpp" ;
-
+    private String query ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.e("MAinactivity" , "Main Activity created");
+        query = getQuestionQueryTag() ;
         mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.question_list_item_recyclerview);
         mQuestionList = new QuestionList() ;
@@ -51,11 +55,25 @@ public class MainActivity extends AppCompatActivity  {
         mRecyclerView.setAdapter(qAdapter);
         StackApi = StackOverflowClient.getApiService() ;
         mProgressBar.setVisibility(View.VISIBLE);
-        getApiResponse(DEFAULT_TAG , 1 , ORDER_BY , SORT_BY);
+        if(query==null){
+        getApiResponse(DEFAULT_TAG , 1 , ORDER_BY , SORT_BY);}
+        else {
+            getApiResponse(query , 1 , ORDER_BY , SORT_BY);
+        }
 
     }
 
 
+
+    public String getQuestionQueryTag(){
+        Intent intent = getIntent() ;
+        if(intent.ACTION_SEARCH.equals(intent.getAction())) {
+            query = intent.getStringExtra(SearchManager.QUERY) ;
+            return query ;
+        }
+        else{
+        return null ; }
+    }
 
 
 
@@ -82,7 +100,6 @@ public class MainActivity extends AppCompatActivity  {
                     List<Question> receivedQuestions = response.body().getQuestions() ;
                     questions.addAll(receivedQuestions) ;
                     qAdapter.notifyDataSetChanged();
-
                 }
             }
 
@@ -93,7 +110,17 @@ public class MainActivity extends AppCompatActivity  {
         });
     }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.menu , menu);
+        SearchManager mSearchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        final SearchView mSearchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        mSearchView.setSearchableInfo(mSearchManager!=null ? mSearchManager.getSearchableInfo(getComponentName()):null);
+        mSearchView.setIconified(true);
+        mSearchView.setSubmitButtonEnabled(true);
+        mSearchView.setQueryRefinementEnabled(true);
+        return true ;
+    }
 
 
 }
