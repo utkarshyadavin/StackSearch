@@ -29,6 +29,7 @@ public class MainActivity extends AppCompatActivity implements StackQuestionView
     private QuestionList mQuestionList ;
     private List<Question> questions ;
     private ProgressBar mProgressBar ;
+    private EndlessScrollListener mScrollListener ;
     private String ORDER_BY = "desc" ;
     private String SORT_BY = "activity" ;
     private String DEFAULT_TAG = "cpp" ;
@@ -44,7 +45,7 @@ public class MainActivity extends AppCompatActivity implements StackQuestionView
         updateUI(query);
     }
 
-    public void updateUI(String query){
+    public void updateUI(final String query){
         setContentView(R.layout.activity_main);
         mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.question_list_item_recyclerview);
@@ -54,6 +55,14 @@ public class MainActivity extends AppCompatActivity implements StackQuestionView
         mRecyclerView.setLayoutManager(mLayoutManager);
         qAdapter = new QuestionAdapter(MainActivity.this , questions);
         mRecyclerView.setAdapter(qAdapter);
+        mScrollListener = new EndlessScrollListener(mLayoutManager) {
+            @Override
+            public void onLoadMore(int currentPage, int totalItemCount, RecyclerView view) {
+                showProgressBar();
+                mPresenter.getApiResponse(query, currentPage , ORDER_BY , SORT_BY);
+            }
+        };
+        mRecyclerView.addOnScrollListener(mScrollListener);
         showProgressBar();
         mPresenter.getApiResponse(query ,1 , ORDER_BY , SORT_BY);
     }

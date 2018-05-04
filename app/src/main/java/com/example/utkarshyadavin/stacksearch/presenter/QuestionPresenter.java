@@ -33,10 +33,6 @@ public class QuestionPresenter  {
 
 
 
-
-
-
-
     // Method fetched data and updates the ArrayList with new data each time it is called
 
     public void getApiResponse(String tag , int page , String orderBy , String sort){
