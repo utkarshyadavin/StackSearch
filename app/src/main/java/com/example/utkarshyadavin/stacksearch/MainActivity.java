@@ -13,28 +13,22 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.support.v7.widget.SearchView;
 
-import retrofit2.Call ;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 import com.example.utkarshyadavin.stacksearch.adapter.QuestionAdapter;
-import com.example.utkarshyadavin.stacksearch.api.ApiService;
-import com.example.utkarshyadavin.stacksearch.helper.StackOverflowClient;
 import com.example.utkarshyadavin.stacksearch.models.Question;
 import com.example.utkarshyadavin.stacksearch.models.QuestionList;
-import com.example.utkarshyadavin.stacksearch.models.User;
+import com.example.utkarshyadavin.stacksearch.presenter.QuestionPresenter;
 
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity  {
-
+public class MainActivity extends AppCompatActivity implements StackQuestionViewInterface  {
+    private QuestionPresenter mPresenter ;
     private RecyclerView mRecyclerView ;
     private QuestionAdapter qAdapter ;
     private QuestionList mQuestionList ;
-    private ProgressBar mProgressBar ;
-    private ApiService StackApi ;
     private List<Question> questions ;
+    private ProgressBar mProgressBar ;
     private String ORDER_BY = "desc" ;
     private String SORT_BY = "activity" ;
     private String DEFAULT_TAG = "cpp" ;
@@ -43,8 +37,15 @@ public class MainActivity extends AppCompatActivity  {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        mPresenter = new QuestionPresenter(this) ;
         query = getQuestionQueryTag() ;
+        if(query==null)
+            query = DEFAULT_TAG ;
+        updateUI(query);
+    }
+
+    public void updateUI(String query){
+        setContentView(R.layout.activity_main);
         mProgressBar = (ProgressBar) findViewById(R.id.progressbar);
         mRecyclerView = (RecyclerView) findViewById(R.id.question_list_item_recyclerview);
         mQuestionList = new QuestionList() ;
@@ -53,17 +54,11 @@ public class MainActivity extends AppCompatActivity  {
         mRecyclerView.setLayoutManager(mLayoutManager);
         qAdapter = new QuestionAdapter(MainActivity.this , questions);
         mRecyclerView.setAdapter(qAdapter);
-        StackApi = StackOverflowClient.getApiService() ;
-        mProgressBar.setVisibility(View.VISIBLE);
-        if(query==null){
-        getApiResponse(DEFAULT_TAG , 1 , ORDER_BY , SORT_BY);}
-        else {
-            getApiResponse(query , 1 , ORDER_BY , SORT_BY);
-        }
-
+        showProgressBar();
+        mPresenter.getApiResponse(query ,1 , ORDER_BY , SORT_BY);
     }
 
-
+    // Method returns the query tag enterred by the user
 
     public String getQuestionQueryTag(){
         Intent intent = getIntent() ;
@@ -73,41 +68,6 @@ public class MainActivity extends AppCompatActivity  {
         }
         else{
         return null ; }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void getApiResponse(String tag , int page , String orderBy , String sort){
-
-        Call<QuestionList> call = StackApi.getQuestionData(tag , page , orderBy , sort);
-        call.enqueue(new Callback<QuestionList>() {
-            @Override
-            public void onResponse(Call<QuestionList> call, Response<QuestionList> response) {
-
-                if(response.isSuccessful()){
-                    mProgressBar.setVisibility(View.INVISIBLE);
-                    List<Question> receivedQuestions = response.body().getQuestions() ;
-                    questions.addAll(receivedQuestions) ;
-                    qAdapter.notifyDataSetChanged();
-                }
-            }
-
-            @Override
-            public void onFailure(Call<QuestionList> call, Throwable t) {
-
-            }
-        });
     }
 
     @Override
@@ -122,5 +82,20 @@ public class MainActivity extends AppCompatActivity  {
         return true ;
     }
 
+    @Override
+    public void addReceivedItems(List<Question> receivedQuestions){
+        questions.addAll(receivedQuestions) ;
+        qAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void showProgressBar(){
+        mProgressBar.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgressBar(){
+        mProgressBar.setVisibility(View.INVISIBLE);
+    }
 
 }
