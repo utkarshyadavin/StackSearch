@@ -27,10 +27,6 @@ public class Question {
     @Expose
     private String questiondetails ;
 
-
-    // getter methods
-
-
     public User getOwner() {
         return owner;
     }
@@ -46,10 +42,6 @@ public class Question {
     public String getQuestiondetails() {
         return questiondetails;
     }
-
-
-    // setter methods
-
 
     public void setOwner(User owner) {
         this.owner = owner;

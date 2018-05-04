@@ -16,13 +16,9 @@ public class QuestionList {
     @Expose
     private List<Question> questions = new ArrayList<Question>() ;
 
-    //getter method
-
     public List<Question> getQuestions() {
         return questions;
     }
-
-    //Setter method
 
     public void setQuestions(List<Question> questions) {
         this.questions = questions;

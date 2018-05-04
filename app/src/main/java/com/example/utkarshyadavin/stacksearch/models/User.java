@@ -17,10 +17,6 @@ public class User {
     @Expose
     private String profileImageUrl ;
 
-
-    //Getter methods
-
-
     public String getUsername() {
         return username;
     }
@@ -28,10 +24,6 @@ public class User {
     public String getProfileImageUrl() {
         return profileImageUrl;
     }
-
-
-    //Setter methods
-
 
     public void setUsername(String username) {
         this.username = username;

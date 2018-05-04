@@ -14,4 +14,7 @@ public interface StackQuestionViewInterface {
     public void showProgressBar();
     public void hideProgressBar() ;
     public void addReceivedItems(List<Question> receivedQuestions) ;
+    public void noResultFoundError() ;
+    public void httpError() ;
+    public void connectionError() ;
 }

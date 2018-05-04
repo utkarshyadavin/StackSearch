@@ -11,12 +11,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class StackOverflowClient {
 
     // Root Url for Stack Search
-
     private static final String ROOT_URL = "https://api.stackexchange.com/" ;
 
 
     // Getting a retrofit instance
-
     private static Retrofit getRetrofitInstance(){
         return new Retrofit.Builder()
                 .baseUrl(ROOT_URL)
@@ -26,7 +24,6 @@ public class StackOverflowClient {
 
 
     // Getting the Api Client object for making network calls
-
     public static ApiService getApiService() {
         return getRetrofitInstance().create(ApiService.class) ;
     }

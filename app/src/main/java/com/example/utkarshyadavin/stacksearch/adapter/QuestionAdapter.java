@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,9 +16,9 @@ import com.example.utkarshyadavin.stacksearch.models.Question;
 import com.example.utkarshyadavin.stacksearch.models.User;
 import com.squareup.picasso.Picasso;
 
-import org.w3c.dom.Text;
-
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by utkarshyadavin on 2/5/18.
@@ -34,14 +35,14 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
     }
 
     public class QuestionViewHolder extends RecyclerView.ViewHolder {
-        private ImageView userProfileImage ;
+        private CircleImageView userProfileImage ;
         private TextView username ;
         private TextView questionTitle ;
         private TextView questionDescription ;
 
         public QuestionViewHolder( View mView){
             super(mView);
-            userProfileImage = (ImageView) mView.findViewById(R.id.user_profile_imageview);
+            userProfileImage = (CircleImageView) mView.findViewById(R.id.user_profile_imageview);
             username = (TextView) (TextView) mView.findViewById(R.id.username) ;
             questionTitle = (TextView) mView.findViewById(R.id.question_title);
             questionDescription = (TextView) mView.findViewById(R.id.question_description);
@@ -63,8 +64,9 @@ public class QuestionAdapter extends RecyclerView.Adapter<QuestionAdapter.Questi
         User user = mQuestion.getOwner() ;
 
         holder.username.setText(user.getUsername());
-        holder.questionTitle.setText(mQuestion.getQuestionTitle());
-        holder.questionDescription.setText(mQuestion.getQuestiondetails());
+        String htmlBoldText = "<b>" + mQuestion.getQuestionTitle() + "</b>" ;
+        holder.questionTitle.setText(Html.fromHtml(htmlBoldText));
+        holder.questionDescription.setText(Html.fromHtml(mQuestion.getQuestiondetails()));
 
         Picasso.with(context).load(user.getProfileImageUrl())
                 .placeholder(R.drawable.ic_launcher_background)

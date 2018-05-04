@@ -21,5 +21,4 @@ public interface ApiService {
             @Query("order") String orderBy ,
             @Query("sort") String sortBy
             ) ;
-
 }

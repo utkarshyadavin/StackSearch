@@ -3,6 +3,7 @@ package com.example.utkarshyadavin.stacksearch;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,8 +11,11 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.support.v7.widget.SearchView;
+import android.widget.Toast;
 
 
 import com.example.utkarshyadavin.stacksearch.adapter.QuestionAdapter;
@@ -34,6 +38,8 @@ public class MainActivity extends AppCompatActivity implements StackQuestionView
     private String SORT_BY = "activity" ;
     private String DEFAULT_TAG = "cpp" ;
     private String query ;
+    private ImageView mStatusIndicator ;
+    private Button mButton ;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,5 +112,40 @@ public class MainActivity extends AppCompatActivity implements StackQuestionView
     public void hideProgressBar(){
         mProgressBar.setVisibility(View.INVISIBLE);
     }
+
+    @Override
+    public void noResultFoundError(){
+        // Show error message
+        setErrorLayout();
+        mStatusIndicator.setImageDrawable(ContextCompat.getDrawable(getApplicationContext() , R.drawable.no_result_found));
+       hideProgressBar();
+    }
+
+    @Override
+    public void httpError(){
+        // Some http error occured
+        setErrorLayout();
+        mStatusIndicator.setImageDrawable(ContextCompat.getDrawable(getApplicationContext() , R.drawable.http_error));
+    }
+
+    @Override
+    public void connectionError(){
+        // Internet connection error ;
+        setErrorLayout();
+        mStatusIndicator.setImageDrawable(ContextCompat.getDrawable(getApplicationContext() , R.drawable.no_internet));
+        mButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateUI(query);
+            }
+        });
+    }
+
+    public void setErrorLayout(){
+        setContentView(R.layout.error_layout);
+        mStatusIndicator = (ImageView) findViewById(R.id.status_indicator_image);
+        mButton = (Button) findViewById(R.id.try_again_button);
+    }
+
 
 }
